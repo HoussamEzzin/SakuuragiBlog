@@ -115,7 +115,7 @@ class PublisherManager(BaseUserManager):
          if email is None:
              raise TypeError("Users must have an email address")
          now = timezone.now()
-         publihser = Publihser(
+         publihser = Publisher(
              email=self.normalize_email(email),
              is_staff = False,
              is_active = False,
@@ -165,23 +165,22 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
 
-class ArticlePart(models.Model):
-    
-    sub_title = models.CharField(max_length=200, default="", blank=True)
-    content = models.TextField()
-    
-    def __str__(self):
-        return self.sub_title
+
 
 class Article(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,
                           editable=False)
     pub_date = models.DateField()
     title = models.CharField(max_length=200)
+    article_pic = models.ImageField(
+        null = True,
+        upload_to='images',
+    )
     author = models.ForeignKey(Publisher, on_delete=models.CASCADE)
     # on_delete= models.CASCADE if the user get deleted, the post is deleted aswell
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
-    parts_article = models.ArrayField(model_container=ArticlePart, default=None)
+    
+    content = models.TextField()
     
     objects = models.DjongoManager()
     

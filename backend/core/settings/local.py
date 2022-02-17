@@ -25,7 +25,10 @@ SECRET_KEY = 'q$ap-6dy-(z0g&j*%u#-=(o*r7=5a7heuk#yc-0trk^pm@#5_%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+
+# Extending User Model
+AUTH_USER_MODEL = "common.User"
 
 
 # Application definition
@@ -40,8 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'common',
     'core',
-    'publisher',
-    'reader',
+    # 'publisher',
+    # 'reader',
     'corsheaders',
 ]
 
@@ -57,10 +60,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8081',
-)
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'core.urls'
 
@@ -87,12 +87,18 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": "djongo",
+        "NAME": "blog_db",
+        'ENFORCE_SCHEMA': False,
+        "CLIENT": {
+            "host": "mongodb+srv://houssamezzin:4T8oqJG5SRo68pjf@cluster0.gutvg.mongodb.net/blog_db?w=majority&ssl=true&ssl_cert_reqs=CERT_NONE",
+            "username": "houssamezzin",
+            "password": "4T8oqJG5SRo68pjf",
+            "authMechanism": "SCRAM-SHA-1",
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -131,3 +137,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Media files (images, ...)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dgjxrloyj',
+    'API_KEY': '385453314477463',
+    'API_SECRET': '4-ExoXLeVaeJkPQis4xHGpO536o ',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600

@@ -1,5 +1,4 @@
-from operator import mod
-from django import models
+from djongo import models
 
 class Years(models.Model):
     year = models.CharField( max_length=25)
