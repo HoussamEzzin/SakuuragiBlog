@@ -8,16 +8,28 @@ from common.models.models import (
     User
 )
 
-
+class CategorySerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Category
+        fields = "__all__"
         
 
 class ArticleSerializer(serializers.ModelSerializer):
     
- 
+    article_category = CategorySerializer()
     
     class Meta:
         model = Article
         fields = "__all__"
+    
+    def create(self, validated_data):
+        category = Category.objects.get(
+            category_name = validated_data['article_category']['category_name']
+        )
+        validated_data['article_category'] = category
+        article = Article.objects.create(**validated_data)
+        return article
         
 class ArticleCommentSerializer(serializers.ModelSerializer):
     
@@ -48,9 +60,5 @@ class NotificationSerializer(serializers.ModelSerializer):
         queryset = User.objects.get(id=obj.sender.id)
         return queryset.profile_pic
 
-class CategorySerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Category
-        fields = "__all__"
+
         

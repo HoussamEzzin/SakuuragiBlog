@@ -1,4 +1,5 @@
 from email.policy import HTTP
+from functools import partial
 import json
 from json import JSONDecodeError
 
@@ -46,16 +47,47 @@ class ArticleView(viewsets.GenericViewSet):
         except JSONDecodeError and UnicodeDecodeError:
             data = request.data
         
-        serializer = self.serializer_class(data = data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({
-            "Success": True,
-            "message":"Article created successfully",
-            "article": serializer.data,
-        },
-                        status=status.HTTP_201_CREATED)
+        if data and data!= "":
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            article = serializer
+            queryset = Article.objects.filter(
+                article_author_id = data['author']
+            )
+            serializer = self.serializer_class(queryset, many=True)
+            return Response(
+                {
+                    "Success":True,
+                    "message":"Article added successfully",
+                    "data": serializer.data,
+                    "article": article.data
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                {"Success": False, "message": "There is no DATA"},
+                status=status.HTTP_406_NOT_ACCEPTABLE,
+            )
     
+    def add_article_picture(self,request,id,*args,**kwargs):
+        try:
+            data = json.loads(request.body)
+        except JSONDecodeError and UnicodeDecodeError:
+            data = request.data
+
+        if data and data != "":
+            model = get_object_or_404(Article,pk=id)
+            serializer = ArticleSerializer(model, data=data, partial=True)
+            
+            if serializer.is_valid():
+                serializer.save()
+                article = serializer
+                queryset = Article.objects.filter(
+                    author=serializer.data['']
+                )
+        
     def get_article_by_id(self,request, pk=None,*args,**kwagrs):
         queryset = self.get_queryset(pk=pk)
         serializer = self.serializer_class(queryset, many=True)
@@ -86,6 +118,8 @@ class ArticleView(viewsets.GenericViewSet):
             status=status.HTTP_201_CREATED,
         )
     
+    
+    
     def destroy_article(self,request, pk=None):
         try:
             Article.objects.get(pk=pk).delete()
@@ -105,4 +139,4 @@ class ArticleView(viewsets.GenericViewSet):
             status= status.HTTP_201_CREATED,
         )
         
-    # TODO: add delete_article and update_article
+    
