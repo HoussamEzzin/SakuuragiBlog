@@ -1,5 +1,3 @@
-from email.policy import HTTP
-from functools import partial
 import json
 from json import JSONDecodeError
 
@@ -53,7 +51,7 @@ class ArticleView(viewsets.GenericViewSet):
             serializer.save()
             article = serializer
             queryset = Article.objects.filter(
-                article_author_id = data['author']
+                article_publisher_id = data['article_publisher']
             )
             serializer = self.serializer_class(queryset, many=True)
             return Response(
@@ -85,7 +83,16 @@ class ArticleView(viewsets.GenericViewSet):
                 serializer.save()
                 article = serializer
                 queryset = Article.objects.filter(
-                    author=serializer.data['']
+                    article_publisher_id=serializer.data['article_publisher']
+                )
+                serializer = self.serializer_class(queryset,many=True)
+                return Response(
+                    {
+                        "Success":True,
+                        "message":"registred successfully",
+                        "data": serializer.data,
+                        "article":article.data,
+                    }
                 )
         
     def get_article_by_id(self,request, pk=None,*args,**kwagrs):
