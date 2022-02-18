@@ -168,16 +168,16 @@ class Article(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,
                           editable=False)
     pub_date = models.DateField()
-    title = models.CharField(max_length=200)
+    article_title = models.CharField(max_length=200)
     article_pic = models.ImageField(
         null = True,
         upload_to='images',
     )
     author = models.ForeignKey(Publisher, on_delete=models.CASCADE)
     # on_delete= models.CASCADE if the user get deleted, the post is deleted aswell
-    category = models.ForeignKey(Category,on_delete=models.CASCADE)
+    article_category = models.ForeignKey(Category,on_delete=models.CASCADE)
     
-    content = models.TextField()
+    article_content = models.TextField()
     
     objects = models.DjongoManager()
     
