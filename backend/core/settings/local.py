@@ -151,3 +151,8 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
+
+
+PASSWORD_RESET_URL = "/reset-password/"
+ACTIVATION_URL = "/account/activation/"
+FRONTEND_URL = "127.0.0.1:3000"
