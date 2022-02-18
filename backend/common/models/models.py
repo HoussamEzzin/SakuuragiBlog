@@ -1,24 +1,21 @@
-import datetime
 import email
-from email.policy import default
-from unicodedata import category
 import uuid
-from xmlrpc.client import boolean
 
-from cloudinary_storage.storage import VideoMediaCloudinaryStorage
+
+
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.dispatch import receiver
-from django.forms import BooleanField
+
 from django.utils import timezone
 from djongo import models
-from rest_framework.fields import ListField
+
 
 from common.models.abstract_models import Module, Tag, Years
 
 
 class UserManager(BaseUserManager):
     
+    # abstract method for creating users
     def _create_user(
         self, username, email, password, is_staff, is_superuser, **extra_fields
     ):
