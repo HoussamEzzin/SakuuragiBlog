@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    "rest_framework.authtoken",
     'common',
     'core',
     # 'publisher',
@@ -82,6 +84,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+# the configuration of rest framework
+REST_FRAMEWORK = {
+    # Pagination settings for retrieving lists
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 100,
+    # the default authentication
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework.authentication.TokenAuthentication",
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+# Custom core for authentication that allows login using username/email
+AUTHENTICATION_BACKENDS = ["core.utils.backends.EmailOrUsernameModelBackend"]
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -136,8 +158,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
-
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfile')
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # Media files (images, ...)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -152,6 +175,17 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
 
+
+EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"
+ANYMAIL = {
+    "MAILJET_API_KEY": "e58b9dc7cdbe1c951f791f9012ff1a0f",
+    "MAILJET_SECRET_KEY": "97cff52350832464de4319bab5cc8852",
+}
+
+DEFAULT_FROM_EMAIL = "ezzinhoussam@gmail.com"
+SERVER_EMAIL = "in-v3.mailjet.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 25
 
 PASSWORD_RESET_URL = "/reset-password/"
 ACTIVATION_URL = "/account/activation/"

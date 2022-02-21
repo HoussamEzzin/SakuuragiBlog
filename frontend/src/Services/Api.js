@@ -7,6 +7,12 @@ const instance = axios.create({baseURL: process.env.REACT_APP_API_KEY});
 
 const store = ConfigureStore().getState();
 
+console.log("store"+store.session)
+
+//to get auth token
+const user = get("session_user")
+
+
 // manage all kind of erros
 
 const mapRegisterError = response => {
@@ -66,4 +72,21 @@ export const add_article = _data =>{
             // }
             throw err;
         })
+}
+
+export const delete_article = id => {
+    let token = user.token
+    return instance
+        .delete(`api/delete/article/${id}`,{
+            headers : {Authorization : "Token " + token}
+        })
+        .then(response => {
+            return response.data;
+        })
+        .catch(err => {
+            // if (err.response){
+            //     throw new
+            // }
+            throw err;
+        });
 }

@@ -18,7 +18,10 @@ from common.serializers.accounts import (
     ReaderSerializer
 )
 
-class ReaderView(mixins.CreateModelMixin,mixins.UpdateModelMixin,
+from core.utils.email import SendActivation
+
+
+class ReaderView(SendActivation,mixins.CreateModelMixin,mixins.UpdateModelMixin,
                  mixins.DestroyModelMixin,viewsets.GenericViewSet):
     
     queryset = Reader.objects.all()
@@ -27,9 +30,9 @@ class ReaderView(mixins.CreateModelMixin,mixins.UpdateModelMixin,
     
     def create(self, request, *args,**kwargs):
         """
-            Function that creates a new User
+            Function that creates a new User with email activation
         """
-        # TODO : send an email for activation
+        
         
         data = ''
         try:
@@ -42,8 +45,15 @@ class ReaderView(mixins.CreateModelMixin,mixins.UpdateModelMixin,
             serializer.is_valid(raise_exception=True)
             serializer.validated_data["password"] = data["password"]
             serializer.save()
-            # queryset = Reader.objects.all()
-            # username = serializer.validated_data["username"]
+            queryset = Reader.objects.all()
+            username = serializer.validated_data["username"]
+            self.account_activation(
+                request,
+                "reader",
+                get_object_or_404(queryset,username=username),
+                "Activation",
+                to=data["email"],
+            )
             return Response(
                 {"Success":True,
                  "message":"registered successfully"},
@@ -62,9 +72,62 @@ class ReaderView(mixins.CreateModelMixin,mixins.UpdateModelMixin,
         serializer = self.serializer_class(reader)
         return Response(serializer.data,status=status.HTTP_200_OK)
     
-    # TODO : add functions for changing email and password
+    # TODO : add update user info function
+    
+    def activated(self, request):
+        token = request.GET.get('token')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY)
+            reader = Reader.objects.get(id=payload['user_id'])
+            if not reader.is_active:
+                reader.is_active = True
+                reader.save()
+            return Response({
+                'message':'Activation Expired'
+            },
+                            status=status.HTTP_200_OK)
+        except jwt.exceptions.ExpiredSignatureError:
+            return Response(
+                {'error':'Activation Expired'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except jwt.exceptions.DecodeError:
+            return Response(
+                {'error': 'Invalid token'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    def set_password(self, request, username, *args, **kwargs):
+        queryset = Reader.objects.all()
+        reader = get_object_or_404(queryset, username=username)
+        data = request.data
+        serializer = self.serializer_class(reader, data=data)
+        serializer.is_valid(raise_exception=True)
+        reader.set_password(make_password(serializer.validated_data['password']))
+        reader.is_active = False
+        reader.save()
+        self.account_activation(
+            request, "reader", reader, "Password changed", to=reader.get_email()
+        )
+        return Response(serializer.data)
 
-class PublisherView(viewsets.GenericViewSet):
+    def set_email(self, request,username, *args, **kwargs):
+        queryset = Reader.objects.all()
+        reader = get_object_or_404(queryset, username=username)
+        data = request.data
+        serializer = self.serializer_class(reader, data=data)
+        serializer.is_valid(raise_exception=True)
+        reader.set_email(serializer.validated_data['email'])
+        reader.is_active = False
+        reader.save()
+        self.account_activation(
+            request, "reader", reader, "email changed",to=reader.get_email()
+        )
+        return Response(serializer.data)
+    
+    
+
+class PublisherView(SendActivation,viewsets.GenericViewSet):
     
     serializer_class = PublisherSerializer
     permission_classes = (AllowAny, )
@@ -82,7 +145,15 @@ class PublisherView(viewsets.GenericViewSet):
             serializer.validated_data["password"] = data["password"]
             serializer.save()
             
-            # TODO : add email activation
+            queryset = Publisher.objects.all()
+            username = serializer.validated_data["username"]
+            self.account_activation(
+                request,
+                "publisher",
+                get_object_or_404(queryset, username=username),
+                "Activation",
+                to=data["email"],
+            )
             
             return Response(
                 {
@@ -107,7 +178,34 @@ class PublisherView(viewsets.GenericViewSet):
         serializer = self.serializer_class(publisher)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    #TODO : add destory, update and email activation
+    #TODO : add destory, update 
+    
+    def activated(self, request):
+        token = request.GET.get('token')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY)
+            publisher = Publisher.objects.get(id=payload['user_id'])
+            if not publisher.is_active:
+                publisher.is_active = True
+                publisher.save()
+            return Response(
+                {'message': 'Successfully activated',
+                 "Success": True},
+                status= status.HTTP_200_OK,
+            )
+        except jwt.exceptions.ExpiredSignatureError:
+            return Response(
+                {'error':'Activation expired'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except jwt.exceptions.DecodeError:
+            return Response(
+                {'error': 'Invalid token'},
+                status = status.HTTP_400_BAD_REQUEST
+            )
+    
+    # TODO: add set_password and set_email
+        
     
 
 # TODO : add password reset classes
