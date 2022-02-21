@@ -204,8 +204,97 @@ class PublisherView(SendActivation,viewsets.GenericViewSet):
                 status = status.HTTP_400_BAD_REQUEST
             )
     
-    # TODO: add set_password and set_email
-        
+    def set_password(self,request, username, *args, **kwargs):
+        queryset = Publisher.objects.all()
+        publisher = get_object_or_404(queryset, username=username)
+        data = request.data
+        serializer = self.serializer_class(publisher, data=data)
+        serializer.is_valid(raise_exception=True)
+        publisher.set_password(make_password(serializer.validated_data['password']))
+        publisher.is_active = False
+        publisher.save()
+        self.account_activation(
+            request,
+            "publisher-activated",
+            publisher,
+            "password changed",
+            to=publisher.get_email(),
+        )
+        return Response(serializer.data)
+    def set_email(self,request, username, *args, **kwargs):
+        queryset = Publisher.objects.all()
+        publisher = get_object_or_404(queryset, username=username)
+        data = request.data
+        serializer = self.serializer_class(publisher, data=data)
+        serializer.is_valid(raise_exception=True)
+        publisher.set_email(serializer.validated_data['email'])
+        publisher.is_active = False
+        publisher.save()
+        self.account_activation(
+            request,
+            "publisher-activated",
+            publisher,
+            "email changed",
+            to=publisher.get_email()
+        )        
+        return Response(serializer.data)
     
+class RequestPasswordReser(viewsets.GenericViewSet, SendActivation):
+    
+    serializer_class = ResestPasswordRequestSerializer
+    permission_classes = (AllowAny,)
+    
+    def request_password_reset(self, request, *args, **kwargs):
+        
+        try:
+            data = json.loads(request.body)
+        except JSONDecodeError:
+            data = request.data
 
-# TODO : add password reset classes
+        email = data['email']
+        
+        if User.objects.filter(email = email).exists():
+            user = User.objects.get(email=email)
+            self.password_reset(request, user, to=email)
+        return Response(
+            {
+                'Success': True,
+                'message': 'We have sent you a link to reset your password,'
+            },
+            status=status.HTTP_200_OK,
+        )
+
+class PasswordReset(viewsets.GenericViewSet):
+    
+    serializer_class = ResetPasswordSerializer
+    permission_classes = (AllowAny,)
+    
+    def password_reset(self, request):
+        try:
+            data = json.loads(request.body)
+        except JSONDecodeError:
+            data = request.data 
+        
+        token = data.get('token',None)
+        
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY)
+            user = User.objects.get(id=payload['user_id'])
+            if user.is_active:
+                serializer = self.serializer_class(user, data=data)
+                serializer.is_valid(raise_exception=True)
+                user.set_password(data['password'])
+                user.save()
+                return Response({
+                    'Success':True,'password':'Successfully changed'
+                },
+                                status=status.HTTP_200_OK)
+        except jwt.exceptions.ExpiredSignatureError:
+            return Response({
+                'error': 'lien expired'
+            },status=status.HTTP_400_BAD_REQUEST)
+        except jwt.exceptions.DecodeError:
+            return Response({
+                'error':'invalid token'
+            },
+                            status=status.HTTP_400_BAD_REQUEST)

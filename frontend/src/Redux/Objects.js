@@ -12,4 +12,4 @@ if(initialState.user){
     initialState.authenticated = true;
 }
 
-export 
+export
