@@ -1,6 +1,6 @@
 from django.urls import path
 
-from common.views.modelsView import ArticleView
+from common.views.modelsView import (ArticleView)
 
 
 urlpatterns = [

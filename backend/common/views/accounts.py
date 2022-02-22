@@ -239,7 +239,7 @@ class PublisherView(SendActivation,viewsets.GenericViewSet):
         )        
         return Response(serializer.data)
     
-class RequestPasswordReser(viewsets.GenericViewSet, SendActivation):
+class RequestPasswordReset(viewsets.GenericViewSet, SendActivation):
     
     serializer_class = ResestPasswordRequestSerializer
     permission_classes = (AllowAny,)

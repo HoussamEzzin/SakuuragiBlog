@@ -146,4 +146,54 @@ class ArticleView(viewsets.GenericViewSet):
             status= status.HTTP_201_CREATED,
         )
         
+    def get_publisher_articles(self, request,pk=None,*args,**kwargs):
+        queryset = Article.objects.filter(article_publisher_id=pk)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(
+            {
+                "Success":True,
+                "message": "registred successfully",
+                "publisher_article": serializer.data,
+            },
+            status=status.HTTP_201_CREATED
+        )
+        
+        
+class CategoryView(viewsets.GenericViewSet):
     
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    
+    def get_permissions(self):
+        if self.action == 'get_categories':
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+    
+    def get_categories(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(
+            {
+                "Success": True,
+                "message": "registred successfully",
+                "categories": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    def add_category(self, request):
+        try:
+            data = json.loads(request.body)
+        except JSONDecodeError and UnicodeDecodeError:
+            data = request.data
+        
+        serializer = self.serializer_class(data = data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            "Success": True,
+            "message": "registred successfully",
+            "category":serializer.data,
+        },
+                        status=status.HTTP_201_CREATED,)
