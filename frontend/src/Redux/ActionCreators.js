@@ -6,6 +6,11 @@ import {
     delete_article,
 } from "../Services/Api";
 
+
+export const loginAction = createAction(types.LOGIN, async obj => {
+    return await login(obj);
+})
+
 export const DeleteArticle = createAction(types.DELETE_ARTICLE, async obj => {
     return await delete_article(obj);
 });

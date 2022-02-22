@@ -1,3 +1,12 @@
 export const ADD_ARTICLE = "data/addArticle";
 export const GET_ARTICLES = "data/getArticles";
 export const DELETE_ARTICLE = "data/deleteArticle";
+export const LOGIN = "session/LOGIN";
+export const PARTIALUPDATE = "session/PARTIALUPDATE";
+export const LOGOUT = "session/LOGOUT";
+export const ACTIVATION = "session/ACTIVATION";
+export const RESETPASSWORD = "session/RESETPASSWORD";
+export const RESETPASSWORDEDITE = "session/RESETPASSWORDEDITE";
+export const PUBLISHERREGISTER = "session/PUBLISHERREGISTER";
+export const PARTIALUPDATEPUBLISHER = "session/PARTIALUPDATEPUBLISHER";
+export const READERREGISTER = "session/READERREGISTER";

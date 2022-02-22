@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from common.urls import common
+from common.urls import common, accounts
 from core.settings.local import MEDIA_URL
 from django.conf.urls.static import static
 from django.conf import settings
@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #our urls:
     path("api/", include(common)),
+    path("api/", include(accounts)),
 ]
 
 urlpatterns += static(settings.MEDIA_URL,
