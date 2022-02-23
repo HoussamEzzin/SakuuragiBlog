@@ -28,6 +28,32 @@ export const Session = (state=initialState,action) => {
                 return {user, authenticated: true};
             }
             return {...state, user, authenticated: false};
+        case ActionTypes.PARTIALUPDATE:
+            if(!action.error){
+                user = action.payload.user;
+                user.token = action.payload.token
+                storage.set("session_user",user);
+                return {user, authenticated: true};
+            }
+            return {...state, user, authenticated: true};
+        case ActionTypes.PARTIALUPDATEPUBLISHER:
+            if(!action.error){
+                user = action.payload.user;
+                user.token = action.payload.token;
+                storage.set("session_user", user);
+                return {user, authenticated: true};
+            }
+            return {...state, user, authenticated: true};
+        case ActionTypes.PARTIALUPDATEREADER:
+            if(!action.error){
+                user=action.payload.user;
+                user.token = action.payload.token;
+                storage.set("session_user", user);
+                return {user, authenticated: true};
+            }
+            return {...state, user, authenticated: true};
+        default:
+            return state;
 
     }
 }
