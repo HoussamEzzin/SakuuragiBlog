@@ -57,3 +57,45 @@ export const Session = (state=initialState,action) => {
 
     }
 }
+
+export const Reader = ( state = {
+    allPublishers:[],
+    publisher:[],
+    errMess:null,
+    isLoad:false,
+    }, action) => {
+    switch (action.type){
+        case ActionTypes.GETALLPUBLISHERS:
+            if(!action.error){
+                return{
+                    ...state,
+                    publishers: action.payload.publishers_list,
+                    isLoad:true,
+                };
+            }
+            return {...state, publishers: [], errMess: action.error};
+        default:
+            return state;
+    }
+}
+
+
+export const Data = (state={
+    publisher_articles: [],
+    get_categories: [],
+    get_all_articles: [],
+    errMess:null,
+    isLoad: false,
+}, action) => {
+    switch (action.type){
+        case ActionTypes.PUBLISHERARTICLES:
+            if(!action.error){
+                return {
+                    ...state,
+                    publisher_articles: action.payload.publisher_article,
+                    isLoad: true,
+                }
+            }
+            //uncomplete
+    }
+}

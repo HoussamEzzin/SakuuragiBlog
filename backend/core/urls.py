@@ -21,12 +21,14 @@ from common.urls import common, accounts
 from core.settings.local import MEDIA_URL
 from django.conf.urls.static import static
 from django.conf import settings
+from reader import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     #our urls:
     path("api/", include(common)),
     path("api/", include(accounts)),
+    path("api/", include(urls))
 ]
 
 urlpatterns += static(settings.MEDIA_URL,
