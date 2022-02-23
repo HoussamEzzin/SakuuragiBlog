@@ -149,6 +149,60 @@ export const partial_update = _data => {
         });
 };
 
+export const logout = () => {
+    let data = {"user_id": user.id};
+    const token = get("session_user").token;
+    return instance
+        .post("api/accounts/logout", JSON.stringify(data), {
+            headers: {Authorization: "Token" + token}
+        })
+        .then(response => {
+            return response.data;
+        })
+        .catch(err => {
+            if(err.response){
+                throw new Error(mapRegisterError(err.response));
+            }
+            throw err;
+        });
+};
+
+
+
+// Reader
+
+export const reader_register = _data => {
+    return instance
+        .post("api/accounts/reader/register/", _data)
+        .then(response => {
+            return response.data;
+        })
+        .catch(err=>{
+            if(err.response){
+                throw new Error(mapRegisterError(err.response));
+            }
+            throw err;
+           }
+        );
+};
+
+export const partial_update_reader = _data => {
+    const user = get("session_user");
+    return instance
+        .put(`api/accounts/reader/update/${_data.user_id}/`, _data, {
+            headers: {Authorization: "Token" + user.token}
+        })
+        .then(response => {
+            return response.data;
+        })
+        .catch(err=>{
+            if(err.response){
+                throw new Error(mapAuthError(err.response));
+            }
+            throw err;
+        });
+};
+
 
 // publisher
 
@@ -165,6 +219,24 @@ export const publisher_register = _data => {
             throw err;
         });
 };
+
+export const partial_update_publisher = _data => {
+    const user = get("session_user");
+    return instance
+        .put(`api/accounts/publisher/update-partial/${_data.user_id}`, _data,{
+            headers: {Authorization: "Token" +user.token}
+        })
+        .then(response => {
+            return response.data;
+        })
+        .catch(err => {
+            if( err.message ){
+                throw new Error(mapAuthError(err.response));
+            }
+            throw err;
+        });
+};
+
 
 export const get_publisher_articles = _data=>{
     const user = get("session_user");
@@ -221,7 +293,7 @@ export const add_article = _data =>{
 export const add_article_picture = (data) => {
     const user = get("session_user");
     return instance
-        .put(`api/accounts/articles/add_article_picture/${data.id}`, data.data, {
+        .put(`api/accounts/articles/add_article_picture/${data.id}/`, data.data, {
             headers: { Authorization: "Token" + user.token}
         })
         .then(response=>{
@@ -239,7 +311,7 @@ export const add_article_picture = (data) => {
 export const delete_article = id => {
     let token = user.token
     return instance
-        .delete(`api/delete/article/${id}`,{
+        .delete(`api/delete/article/${id}/`,{
             headers : {Authorization : "Token " + token}
         })
         .then(response => {
