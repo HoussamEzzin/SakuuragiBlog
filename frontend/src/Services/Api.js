@@ -167,6 +167,37 @@ export const logout = () => {
         });
 };
 
+export const account_activation = _data=>{
+    return instance
+        .get(`api/accounts/${_data.type}/activated/?token=${_data.token}`)
+        .then(response => {
+            return response.data;
+        })
+        .catch(err=>{
+            if(err.response){
+                throw new Error(mapActivationError(err.response));
+            }
+            throw err;
+            }
+
+        );
+};
+
+
+
+export const get_categories = () => {
+    return instance
+        .get("api/accounts/categories/")
+        .then(response => {
+            return response.data;
+        })
+        .catch(err => {
+            if(err.response){
+                throw new Error(mapRegisterError(err.response));
+            }
+            throw err;
+        })
+}
 
 
 // Reader
@@ -198,6 +229,38 @@ export const partial_update_reader = _data => {
         .catch(err=>{
             if(err.response){
                 throw new Error(mapAuthError(err.response));
+            }
+            throw err;
+        });
+};
+
+export const get_publishers = (data) => {
+    const token = get("session_user").token;
+    return instance
+        .post("api/account/get/publishers/", JSON.stringify(data), {
+            headers: {Authorization: "Token" + token}
+        })
+        .then(response => {
+            return response.data;
+        })
+        .catch(err=>{
+            if(err.response){
+                throw new Error(mapRegisterError(err.response));
+            }
+            throw err;
+        });
+};
+
+
+export const get_all_publisher = () => {
+    return instance
+        .get("api/get/teachers/")
+        .then(response => {
+            return response.data;
+        })
+        .catch(err=> {
+            if(err.response){
+                throw new Error(mapRegisterError(err.response));
             }
             throw err;
         });

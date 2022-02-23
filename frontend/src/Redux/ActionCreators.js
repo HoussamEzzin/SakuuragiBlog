@@ -4,18 +4,30 @@ import {
     get_articles,
     add_article,
     delete_article,
+    login, reset_password, reset_password_edit
 } from "../Services/Api";
 
 
 export const loginAction = createAction(types.LOGIN, async obj => {
     return await login(obj);
-})
+});
 
-export const DeleteArticle = createAction(types.DELETE_ARTICLE, async obj => {
+export const resetPwdAction = createAction(types.RESETPASSWORD, async obj => {
+    return await reset_password(obj);
+});
+
+export const resetPwdEditAction = createAction(types.RESETPASSWORDEDITE, async obj =>{
+    return await reset_password_edit(obj);
+});
+
+export const partial_updateAction = createAction()
+
+
+export const deleteArticle = createAction(types.DELETE_ARTICLE, async obj => {
     return await delete_article(obj);
 });
 
-export const AddArticle = createAction(types.ADD_ARTICLE, async obj => {
+export const addArticle = createAction(types.ADD_ARTICLE, async obj => {
     return await add_article(obj);
 });
 
