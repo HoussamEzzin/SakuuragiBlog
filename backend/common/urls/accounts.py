@@ -122,22 +122,27 @@ urlpatterns = [
         name="get_publisher_articles"
     ),
     path(
-        "accounts/add_article_picture/<slug:id>/",
+        "accounts/articles/add_article/",
+        ArticleView.as_view({"post":"add_article"}),
+        name="add_article",
+    ),
+    path(
+        "accounts/articles/add_article_picture/<slug:id>/",
         ArticleView.as_view({"put":"add_article_picture"}),
         name="add_article_picture"
     ),
     path(
-        "accounts/add_category/",
+        "accounts/categories/add_category/",
         CategoryView.as_view({"post":"add_category"}),
         name="add_category",
     ),
     path(
-        "accounts/get_categories/",
+        "accounts/categories/",
         CategoryView.as_view({"get":"get_categories"}),
         name="get_categories"
     ),
     path(
-        "accounts/get_article_by_category",
+        "accounts/articles/get_article_by_category",
         CategoryView.as_view({"post":"get_article_by_category"}),
         name="get_article_by_category"
     ),

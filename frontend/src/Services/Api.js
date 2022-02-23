@@ -88,6 +88,68 @@ const mapAuthError = response => {
     return response.data.message;
 };
 
+//Common
+
+export const login = _data => {
+    return instance
+        .post("api/accounts/login/", JSON.stringify(_data))
+        .then(response => {
+            return response.data;
+        })
+        .catch(err=>{
+            if(err.response){
+                throw new Error(mapAuthError(err.response));
+            }
+            throw err;
+        });
+};
+
+export const reset_password = _data => {
+    return instance
+        .post("api/reset_password/", JSON.stringify(_data))
+        .then(response => {
+            return response.data;
+        })
+        .catch(err => {
+            if(err.response){
+                throw new Error(mapAuthError(err.response));
+            }
+            throw err;
+        });
+};
+
+export const reset_password_edit = _data => {
+    return instance
+        .post("api/reset_password/edit/", JSON.stringify(_data))
+        .then(response => {
+            return response.data;
+        })
+        .catch(err => {
+            if(err.response){
+                throw new Error(mapAuthError(err.response));
+            }
+            throw err;
+        });
+};
+
+export const partial_update = _data => {
+    const user = get("session_user");
+    return instance
+        .put(`api/accounts/update-partial/${user.id}/`, JSON.stringify(_data), {
+            headers: {Authorization: "Token" + user.token}
+        })
+        .then(response=>{
+            return response.data;
+        })
+        .catch(err => {
+            if(err.response){
+                throw new Error(mapAuthError(err.response));
+            }
+            throw err;
+        });
+};
+
+
 // publisher
 
 export const publisher_register = _data => {
@@ -136,24 +198,43 @@ export const get_articles = () =>{
             }
             throw err;
         });
-}
+};
 
-// TODO : change this function (only publishers are allowed to publish)
+
 export const add_article = _data =>{
+    const user = get("session_user");
     return instance
-        .post("api/add/article/",
-            _data, )
-        .then(response =>{
-            return response.data
-            }
-        )
-        .catch(err => {
-            // if(err.response){
-            //     throw new Error()
-            // }
-            throw err;
+        .post("api/accounts/articles/add_article/", _data, {
+            headers: {Authorization: "Token" + user.token}
         })
-}
+        .then(response=>{
+            return response.data;
+        })
+        .catch(err => {
+            if(err.response){
+                throw new Error(mapPublisherRegisterError((err.response)));
+            }
+            throw err;
+        });
+};
+
+export const add_article_picture = (data) => {
+    const user = get("session_user");
+    return instance
+        .put(`api/accounts/articles/add_article_picture/${data.id}`, data.data, {
+            headers: { Authorization: "Token" + user.token}
+        })
+        .then(response=>{
+            return response.data;
+        })
+        .catch(err => {
+            if(err.response){
+                throw new Error(mapAuthError((err.response)));
+            }
+            throw err;
+        });
+};
+
 
 export const delete_article = id => {
     let token = user.token
