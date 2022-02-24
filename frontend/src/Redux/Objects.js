@@ -80,6 +80,7 @@ export const Reader = ( state = {
 }
 
 
+
 export const Data = (state={
     publisher_articles: [],
     get_categories: [],
@@ -94,8 +95,55 @@ export const Data = (state={
                     ...state,
                     publisher_articles: action.payload.publisher_article,
                     isLoad: true,
-                }
+                };
             }
-            //uncomplete
+            return {...state, publisher_articles: [],errMess: action.error};
+        case ActionTypes.ADD_ARTICLE:
+            if(!action.error){
+                return{
+                    ...state,
+                    publisher_articles: action.payload.data,
+                    isLoad: true,
+                };
+            }
+            return {...state, publisher_articles: [], errMess: action.error};
+        case ActionTypes.DELETE_ARTICLE:
+            if(!action.error){
+                return{
+                    ...state,
+                    publisher_articles: state.publisher_articles.filter(
+                        article => article.id !== action.payload.id_article
+                    ),
+                    isLoad: true,
+                };
+            }
+            return {...state, publisher_articles: [], errMess: action.error};
+        case ActionTypes.ADDARTICLEPICTURE:
+            if(!action.error){
+                return {
+                    ...state,
+                    publisher_articles: action.payload.data,
+                    isLoad: true,
+                };
+            }
+            return {...state, publisher_articles: [], errMess: action.error};
+        case ActionTypes.GET_ARTICLES:
+            if(!action.error){
+                return {
+                    ...state,
+                    get_all_articles: action.payload.articles,
+                    isLoad: true,
+                };
+            }
+            return {...state, get_all_articles: [], errMess: action.error};
+        case ActionTypes.GETCATEGORIES:
+            if(!action.error){
+                return{
+                    ...state,
+                    get_categories: action.payload.categories,
+                    isLoad: true,
+                };
+            }
+            return {...state, get_categories: [], errMess: action.error};
     }
 }

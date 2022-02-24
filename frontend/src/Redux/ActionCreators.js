@@ -13,7 +13,7 @@ import {
     logout,
     account_activation,
     get_publishers,
-    publisher_register, get_publisher_articles, get_all_publisher
+    publisher_register, get_publisher_articles, get_all_publisher, get_categories, add_article_picture
 } from "../Services/Api";
 
 
@@ -43,7 +43,15 @@ export const accountActivationAction = createAction(types.ACTIVATION, async obj 
 
 export const getPublishersAction = createAction(types.GETPUBLISHERS, async obj=>{
     return await get_publishers(obj);
-})
+});
+
+export const getCategoriesAction = createAction(types.GETCATEGORIES, async obj => {
+    return await get_categories(obj);
+});
+
+export const addArticlePictureAction = createAction(types.ADDARTICLEPICTURE, async obj => {
+    return await add_article_picture(obj);
+});
 
 
 
