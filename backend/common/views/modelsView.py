@@ -33,7 +33,7 @@ class ArticleView(viewsets.GenericViewSet):
             {
                 "Success": True,
                 "message": "data loaded successfully",
-                "article_list": serializer.data,
+                "articles": serializer.data,
             },
             status=status.HTTP_201_CREATED
         )

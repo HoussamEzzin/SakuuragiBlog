@@ -2,6 +2,9 @@ import React, {Component} from "react";
 import {BrowserRouter, Switch, Route, withRouter} from "react-router-dom";
 import {connect} from 'react-redux';
 import Home from './Common/HomeComponent';
+import Register from "./Common/Register";
+import RegisterForm from "./Common/RegisterForm";
+import AccountActivationComponent from "./Common/AccountActivationComponent";
 
 
 class Main extends Component{
@@ -17,7 +20,12 @@ class Main extends Component{
             <div>
                 <BrowserRouter>
                     <Switch>
-                        <Route path="/" component={() => <Home/>} />
+                        <Route exact path="/" component={() => <Home/>} />
+                        <Route exact path="/register" component={() => <Register/>} />
+                        <Route exact path="/register/:user" component={RegisterForm}/>
+                        <Route exact path="/account/activation/:type_account/:activation_token"
+                               component={AccountActivationComponent}/>
+                        <Route exact path="/login" />
                     </Switch>
                 </BrowserRouter>
             </div>

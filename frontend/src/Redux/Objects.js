@@ -145,5 +145,7 @@ export const Data = (state={
                 };
             }
             return {...state, get_categories: [], errMess: action.error};
+        default:
+            return state;
     }
 }

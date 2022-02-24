@@ -24,7 +24,7 @@ from common.views.modelsView import (
 urls_reader = [
     path(
         "reader/register",
-        ReaderView.as_view[{"post": "create"}],
+        ReaderView.as_view({"post": "create"}),
         name="reader-register",
     ),
     path(
